@@ -341,7 +341,7 @@ objects:
 
             oc rollout status -w dc gogs
             
-            sleep 10
+            sleep 30
 
             _RETURN=$(curl -o /tmp/curl.log -sL --post302 -w "%{http_code}" http://$GOGS_SVC:3000/user/sign_up \
               --form user_name=$GOGS_USER \
@@ -357,7 +357,7 @@ objects:
               exit 255
             fi
 
-            sleep 10
+            sleep 30
 
             cat <<EOF > /tmp/data.json
             {
