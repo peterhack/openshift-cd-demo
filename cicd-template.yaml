@@ -295,10 +295,6 @@ objects:
                 --param SKIP_TLS_VERIFY=true 
               oc expose svc/dynatrace-cli
               oc env --from=secret/dtcli dc/dynatrace-cli
-              DTCLIURL=$(oc get route dynatrace-cli -o template --template='{{.spec.host}}' | sed "s/dynatrace-cli-CICDNAMESPACE.//g")
-              DTCLI=$(oc get pod -o name --selector app=dynatrace-cli | sed s/pods.//g)
-              // apply credentials to Dynatrace-CLI
-              oc exec $DTCLI -it -- bash -c 'python dtcli.py config apitoken $APITOKEN tenanthost $DTURL' 
             }
             
             oc set resources dc/jenkins --limits=cpu=2,memory=2Gi --requests=cpu=100m,memory=512Mi 
@@ -402,6 +398,14 @@ objects:
               cat /tmp/curl.log
               exit 255
             fi
+
+            sleep 30
+            {
+              DTCLIURL=$(oc get route dynatrace-cli -o template --template='{{.spec.host}}' | sed "s/dynatrace-cli-CICDNAMESPACE.//g")
+              DTCLI=$(oc get pod -o name --selector app=dynatrace-cli | sed s/pods.//g)
+              // apply credentials to Dynatrace-CLI
+              oc exec $DTCLI -it -- bash -c 'python dtcli.py config apitoken $APITOKEN tenanthost $DTURL'
+            }
 
           image: openshift/origin:v3.9
           name: cicd-demo-installer-job
