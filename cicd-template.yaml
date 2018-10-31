@@ -287,7 +287,7 @@ objects:
           - |
             // Deploy Dynatrace CLI for use in pipeline
             {
-              git config --system user.name peterhack && git config --system user.email peter.hack@dynatrace.com
+              git config --system user.name root && git config --system user.email root@localhost
               oc new-app https://github.com/peterhack/dynatrace-cli.git \
                 --param PROJECT_NAME=$CICD_NAMESPACE \
                 --param DOMAIN_NAME=$HOSTNAME \
