@@ -287,7 +287,8 @@ objects:
           - |
             // Deploy Dynatrace CLI for use in pipeline
             {
-              cmd('git -c user.name=git-bug-workaround -c user.email=not@used.com ' 'clone --depth 1 -b %s %s %s' % (DPDK_TAG, DPDK_REPO, DPDK_DIR))
+              export GIT_COMMITTER_NAME=peterhack
+              export GIT_COMMITTER_EMAIL=peter.hack@dynatrace.com
               oc new-app https://github.com/peterhack/dynatrace-cli.git \
                 --param PROJECT_NAME=$CICD_NAMESPACE \
                 --param DOMAIN_NAME=$HOSTNAME \
