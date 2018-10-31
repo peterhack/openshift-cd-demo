@@ -124,7 +124,7 @@ OPENSHIFT_USER=${ARG_USERNAME:-$LOGGEDIN_USER}
 PRJ_SUFFIX=${ARG_PROJECT_SUFFIX:-`echo $OPENSHIFT_USER | sed -e 's/[-@].*//g'`}
 #GITHUB_ACCOUNT=${GITHUB_ACCOUNT:-OpenShiftDemos}
 GITHUB_ACCOUNT=${GITHUB_ACCOUNT:-peterhack}
-GITHUB_REF=${GITHUB_REF:-ocp-3.10-dtcli}
+GITHUB_REF=${GITHUB_REF:-master}
 
 function deploy() {
   oc $ARG_OC_OPS new-project dev-$PRJ_SUFFIX   --display-name="Tasks - Dev"
