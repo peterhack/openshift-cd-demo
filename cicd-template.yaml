@@ -299,6 +299,15 @@ objects:
             
             oc set resources dc/jenkins --limits=cpu=2,memory=2Gi --requests=cpu=100m,memory=512Mi 
             oc label dc jenkins app=jenkins --overwrite 
+            oc rollout status -w dc dynatrace-cli
+
+            sleep 30
+            {
+              DTCLIURL=$(oc get route dynatrace-cli -o template --template='{{.spec.host}}' | sed "s/dynatrace-cli-CICDNAMESPACE.//g")
+              DTCLI=$(oc get pod -o name --selector app=dynatrace-cli | sed s/pods.//g)
+              // apply credentials to Dynatrace-CLI
+              oc exec $DTCLI -it -- bash -c 'python dtcli.py config apitoken $APITOKEN tenanthost $DTURL'
+            }
 
             HOSTNAME=$(oc get route jenkins -o template --template='{{.spec.host}}' | sed "s/jenkins-${CICD_NAMESPACE}.//g")
             GOGS_HOSTNAME="gogs-$CICD_NAMESPACE.$HOSTNAME"
@@ -341,7 +350,7 @@ objects:
 
             oc rollout status -w dc gogs
             
-            sleep 30
+            sleep 60
 
             _RETURN=$(curl -o /tmp/curl.log -sL --post302 -w "%{http_code}" http://$GOGS_SVC:3000/user/sign_up \
               --form user_name=$GOGS_USER \
@@ -400,16 +409,6 @@ objects:
               cat /tmp/curl.log
               exit 255
             fi
-
-            oc rollout status -w dc dynatrace-cli
-
-            sleep 30
-            {
-              DTCLIURL=$(oc get route dynatrace-cli -o template --template='{{.spec.host}}' | sed "s/dynatrace-cli-CICDNAMESPACE.//g")
-              DTCLI=$(oc get pod -o name --selector app=dynatrace-cli | sed s/pods.//g)
-              // apply credentials to Dynatrace-CLI
-              oc exec $DTCLI -it -- bash -c 'python dtcli.py config apitoken $APITOKEN tenanthost $DTURL'
-            }
 
           image: openshift/origin:v3.9
           name: cicd-demo-installer-job
