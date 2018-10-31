@@ -347,7 +347,7 @@ objects:
               --form retype=$GOGS_PWD \
               --form email=admin@gogs.com)
 
-            sleep 5
+            sleep 10 
 
             if [ $_RETURN != "200" ] && [ $_RETURN != "302" ] ; then
               echo "ERROR: Failed to create Gogs admin"
