@@ -287,12 +287,12 @@ objects:
           - |
             // Deploy Dynatrace CLI for use in pipeline
             {
+              GIT_COMMITTER_NAME="peterhack"
+              GIT_COMMITTER_EMAIL="peter.hack@dynatrace.com"
               oc new-app https://github.com/peterhack/dynatrace-cli.git \
                 --param PROJECT_NAME=$CICD_NAMESPACE \
                 --param DOMAIN_NAME=$HOSTNAME \
-                --param SKIP_TLS_VERIFY=true \
-                --param GIT_COMMITTER_NAME=peterhack \
-                --param GIT_COMMITTER_EMAIL=peter.hack@dynatrace.com
+                --param SKIP_TLS_VERIFY=true 
               oc expose svc/dynatrace-cli
               oc env --from=secret/dtcli dc/dynatrace-cli
               DTCLIURL=$(oc get route dynatrace-cli -o template --template='{{.spec.host}}' | sed "s/dynatrace-cli-CICDNAMESPACE.//g")
