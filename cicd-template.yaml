@@ -352,31 +352,17 @@ objects:
             
             sleep 60
 
-            _RETURN=$(curl -o /tmp/curl.log -sL --post302 -w "%{http_code}" http://$GOGS_SVC:3000/user/sign_up \
-              --form user_name=$GOGS_USER \
-              --form password=$GOGS_PWD \
-              --form retype=$GOGS_PWD \
-              --form email=admin@gogs.com)
+            until [ $_RETURN = 200 ] 
+            do
+              _RETURN=$(curl -o /tmp/curl.log -sL --post302 -w "%{http_code}" http://$GOGS_SVC:3000/user/sign_up \
+                --form user_name=$GOGS_USER \
+                --form password=$GOGS_PWD \
+                --form retype=$GOGS_PWD \
+                --form email=admin@gogs.com) && break
+              sleep 15
+            done
 
             sleep 5
-
-            if [ $_RETURN != "200" ] && [ $_RETURN != "302" ] ; then
-             _RETURN=$(curl -o /tmp/curl.log -sL --post302 -w "%{http_code}" http://$GOGS_SVC:3000/user/sign_up \
-               --form user_name=$GOGS_USER \
-               --form password=$GOGS_PWD \
-               --form retype=$GOGS_PWD \
-               --form email=admin@gogs.com)
-            fi 
-
-            sleep 5
-
-            if [ $_RETURN != "200" ] && [ $_RETURN != "302" ] ; then
-              echo "ERROR: Failed to create Gogs admin"
-              cat /tmp/curl.log
-              exit 255
-            fi
-
-            sleep 30
 
             cat <<EOF > /tmp/data.json
             {
