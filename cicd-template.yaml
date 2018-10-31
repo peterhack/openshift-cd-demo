@@ -339,7 +339,9 @@ objects:
             GOGS_USER=gogs
             GOGS_PWD=gogs
 
-            oc rollout status dc gogs
+            oc rollout status -w dc gogs
+            
+            sleep 10
 
             _RETURN=$(curl -o /tmp/curl.log -sL --post302 -w "%{http_code}" http://$GOGS_SVC:3000/user/sign_up \
               --form user_name=$GOGS_USER \
@@ -347,7 +349,7 @@ objects:
               --form retype=$GOGS_PWD \
               --form email=admin@gogs.com)
 
-            sleep 10 
+            sleep 5
 
             if [ $_RETURN != "200" ] && [ $_RETURN != "302" ] ; then
               echo "ERROR: Failed to create Gogs admin"
@@ -398,6 +400,8 @@ objects:
               cat /tmp/curl.log
               exit 255
             fi
+
+            oc rollout status -w dc dynatrace-cli
 
             sleep 30
             {
